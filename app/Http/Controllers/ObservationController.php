@@ -3,12 +3,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Observation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ObservationController extends Controller
 {
     public function index()
     {
-        return Observation::all();
+        $observations = Observation::all();
+        return Inertia::render('Observations', ['observations' => $observations]);
     }
 
     public function store(Request $request)
@@ -50,5 +54,14 @@ class ObservationController extends Controller
     {
         $observation->delete();
         return response()->json(['message' => 'Observation deleted']);
+    }
+
+    public function getImage(Observation $observation): StreamedResponse
+    {
+        if(!Storage::exists($observation->image)) {
+            abort(404);
+        }
+
+        return Storage::response($observation->image);
     }
 }

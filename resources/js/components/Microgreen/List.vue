@@ -1,142 +1,72 @@
 <script setup lang="ts">
-import type {
-    ColumnFiltersState,
-    ExpandedState,
-    SortingState,
-    VisibilityState,
-} from '@tanstack/vue-table'
 import { cn, valueUpdater } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-
-import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input' // Add this import
 import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import {
-    createColumnHelper,
-    FlexRender,
-    getCoreRowModel,
-    getExpandedRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useVueTable,
+  ColumnFiltersState,
+  createColumnHelper, ExpandedState,
+  FlexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel, SortingState,
+  useVueTable, VisibilityState,
 } from '@tanstack/vue-table'
-import { ChevronDown, ChevronsUpDown } from 'lucide-vue-next'
-import { h, ref } from 'vue'
+import {h, ref, watch} from 'vue'
+import {ChevronsUpDown} from "lucide-vue-next";
+import {Link} from "@inertiajs/vue3";
 
-export interface Payment {
-    id: string
-    amount: number
-    status: 'pending' | 'processing' | 'success' | 'failed'
-    email: string
+export interface Microgreen {
+  id: bigint
+  name: string
+  germination_time: string
+  temperature: string
+  light: string
+  value: boolean
 }
 
-const data: Payment[] = [
-    {
-        id: 'm5gr84i9',
-        amount: 316,
-        status: 'success',
-        email: 'ken99@yahoo.com',
-    },
-    {
-        id: '3u1reuv4',
-        amount: 242,
-        status: 'success',
-        email: 'Abe45@gmail.com',
-    },
-    {
-        id: 'derv1ws0',
-        amount: 837,
-        status: 'processing',
-        email: 'Monserrat44@gmail.com',
-    },
-    {
-        id: '5kma53ae',
-        amount: 874,
-        status: 'success',
-        email: 'Silas22@gmail.com',
-    },
-    {
-        id: 'bhqecj4p',
-        amount: 721,
-        status: 'failed',
-        email: 'carmella@hotmail.com',
-    },
-]
+const { microgreen } = defineProps<{ microgreen: Microgreen[] }>()
 
-const columnHelper = createColumnHelper<Payment>()
+const columnHelper = createColumnHelper<Microgreen>()
 
 const columns = [
-    columnHelper.display({
-        id: 'select',
-        header: ({ table }) => h(Checkbox, {
-            'modelValue': table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate'),
-            'onUpdate:modelValue': value => table.toggleAllPageRowsSelected(!!value),
-            'ariaLabel': 'Select all',
-        }),
-        cell: ({ row }) => {
-            return h(Checkbox, {
-                'modelValue': row.getIsSelected(),
-                'onUpdate:modelValue': value => row.toggleSelected(!!value),
-                'ariaLabel': 'Select row',
-            })
-        },
-        enableSorting: false,
-        enableHiding: false,
-    }),
-    columnHelper.accessor('status', {
-        enablePinning: true,
-        header: 'Status',
-        cell: ({ row }) => h('div', { class: 'capitalize' }, row.getValue('status')),
-    }),
-    columnHelper.accessor('email', {
-        header: ({ column }) => {
-            return h(Button, {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Email', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
-        },
-        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('email')),
-    }),
-    columnHelper.accessor('amount', {
-        header: () => h('div', { class: 'text-right' }, 'Amount'),
-        cell: ({ row }) => {
-            const amount = Number.parseFloat(row.getValue('amount'))
-
-            // Format the amount as a dollar amount
-            const formatted = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-            }).format(amount)
-
-            return h('div', { class: 'text-right font-medium' }, formatted)
-        },
-    }),
-    columnHelper.display({
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            const payment = row.original
-
-            /*return h('div', { class: 'relative' }, h(DropdownAction, {
-                payment,
-                onExpand: row.toggleExpanded,
-            }))*/
-        },
-    }),
+  columnHelper.accessor('name', {
+    header: ({ column }) => {
+      return h(Button, {
+        variant: 'ghost',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+      }, () => ['Name', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
+    },
+    cell: ({ row }) => h('div', row.getValue('name')),
+  }),
+  columnHelper.accessor('germination_time', {
+    header: 'Germination Time',
+    cell: ({ row }) => h('div', row.getValue('germination_time')),
+  }),
+  columnHelper.accessor('temperature', {
+    header: 'Temperature',
+    cell: ({ row }) => h('div', row.getValue('temperature')),
+  }),
+  columnHelper.accessor('light', {
+    header: 'Light',
+    cell: ({ row }) => h('div', row.getValue('light')),
+  }),
+  columnHelper.display({
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => h(Link, {
+      class: 'text-blue-500 hover:text-blue-700',
+      href: `/microgreens/${row.original.id}/edit`,
+    }, 'Edit')
+  })
 ]
 
 const sorting = ref<SortingState>([])
@@ -146,133 +76,66 @@ const rowSelection = ref({})
 const expanded = ref<ExpandedState>({})
 
 const table = useVueTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    onSortingChange: updaterOrValue => valueUpdater(updaterOrValue, sorting),
-    onColumnFiltersChange: updaterOrValue => valueUpdater(updaterOrValue, columnFilters),
-    onColumnVisibilityChange: updaterOrValue => valueUpdater(updaterOrValue, columnVisibility),
-    onRowSelectionChange: updaterOrValue => valueUpdater(updaterOrValue, rowSelection),
-    onExpandedChange: updaterOrValue => valueUpdater(updaterOrValue, expanded),
-    state: {
-        get sorting() { return sorting.value },
-        get columnFilters() { return columnFilters.value },
-        get columnVisibility() { return columnVisibility.value },
-        get rowSelection() { return rowSelection.value },
-        get expanded() { return expanded.value },
-        columnPinning: {
-            left: ['status'],
-        },
-    },
+  data: microgreen,
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  getPaginationRowModel: getPaginationRowModel(),
+  getSortedRowModel: getSortedRowModel(),
+  getFilteredRowModel: getFilteredRowModel(),
+  onSortingChange: updaterOrValue => valueUpdater(updaterOrValue, sorting),
+  onColumnFiltersChange: updaterOrValue => valueUpdater(updaterOrValue, columnFilters),
+  onColumnVisibilityChange: updaterOrValue => valueUpdater(updaterOrValue, columnVisibility),
+  onRowSelectionChange: updaterOrValue => valueUpdater(updaterOrValue, rowSelection),
+  onExpandedChange: updaterOrValue => valueUpdater(updaterOrValue, expanded),
+  state: {
+    get sorting() { return sorting.value },
+    get columnFilters() { return columnFilters.value },
+    get columnVisibility() { return columnVisibility.value },
+    get rowSelection() { return rowSelection.value },
+  },
 })
 </script>
 
 <template>
-    <div class="w-full p-4">
-        <div class="flex gap-2 items-center py-4">
-            <Input
-                class="max-w-sm"
-                placeholder="Filter emails..."
-                :model-value="table.getColumn('email')?.getFilterValue() as string"
-                @update:model-value=" table.getColumn('email')?.setFilterValue($event)"
-            />
-            <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                    <Button variant="outline" class="ml-auto">
-                        Columns <ChevronDown class="ml-2 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuCheckboxItem
-                        v-for="column in table.getAllColumns().filter((column) => column.getCanHide())"
-                        :key="column.id"
-                        class="capitalize"
-                        :model-value="column.getIsVisible()"
-                        @update:model-value="(value) => {
-              column.toggleVisibility(!!value)
-            }"
-                    >
-                        {{ column.id }}
-                    </DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-        <div class="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                        <TableHead
-                            v-for="header in headerGroup.headers" :key="header.id" :data-pinned="header.column.getIsPinned()"
-                            :class="cn(
-                                { 'sticky bg-background/95': header.column.getIsPinned() },
-                                header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                              )"
-                        >
-                            <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <template v-if="table.getRowModel().rows?.length">
-                        <template v-for="row in table.getRowModel().rows" :key="row.id">
-                            <TableRow :data-state="row.getIsSelected() && 'selected'">
-                                <TableCell
-                                    v-for="cell in row.getVisibleCells()" :key="cell.id" :data-pinned="cell.column.getIsPinned()"
-                                    :class="cn(
-                    { 'sticky bg-background/95': cell.column.getIsPinned() },
-                    cell.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                  )"
-                                >
-                                    <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow v-if="row.getIsExpanded()">
-                                <TableCell :colspan="row.getAllCells().length">
-                                    {{ JSON.stringify(row.original) }}
-                                </TableCell>
-                            </TableRow>
-                        </template>
-                    </template>
-
-                    <TableRow v-else>
-                        <TableCell
-                            :colspan="columns.length"
-                            class="h-24 text-center"
-                        >
-                            No results.
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-        </div>
-
-        <div class="flex items-center justify-end space-x-2 py-4">
-            <div class="flex-1 text-sm text-muted-foreground">
-                {{ table.getFilteredSelectedRowModel().rows.length }} of
-                {{ table.getFilteredRowModel().rows.length }} row(s) selected.
-            </div>
-            <div class="space-x-2">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    :disabled="!table.getCanPreviousPage()"
-                    @click="table.previousPage()"
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    :disabled="!table.getCanNextPage()"
-                    @click="table.nextPage()"
-                >
-                    Next
-                </Button>
-            </div>
-        </div>
+  <div class="w-full p-4">
+    <div class="flex gap-2 items-center py-4">
+      <a href="/microgreen/create" class="rounded-md text-sm font-medium ring-offset-background bg-green-600 hover:bg-green-700 text-white px-4 py-2">
+        Create Microgreen
+      </a>
+      <!-- Add the filter input -->
+      <Input
+          class="max-w-sm"
+          placeholder="Filter microgreens by name..."
+          :model-value="table.getColumn('name')?.getFilterValue() as string"
+          @update:model-value="table.getColumn('name')?.setFilterValue($event)"
+      />
     </div>
+    <div class="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id">
+              <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <template v-if="table.getRowModel().rows?.length">
+            <template v-for="row in table.getRowModel().rows" :key="row.id">
+              <TableRow :data-state="row.getIsSelected() && 'selected'">
+                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                  <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                </TableCell>
+              </TableRow>
+            </template>
+          </template>
+          <TableRow v-else>
+            <TableCell :colspan="columns.length" class="h-24 text-center">
+              No results found.
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
+  </div>
 </template>

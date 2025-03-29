@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     Route::group(['prefix' => 'observations', 'as' => 'observations.'], function () {
         Route::get('/', [ObservationController::class, 'index'])->name('index');
+        Route::get('/{observation}/image', [ObservationController::class, 'getImage'])->name('image');
         Route::get('/create', [ObservationController::class, 'create'])->name('create');
         Route::post('/', [ObservationController::class, 'store'])->name('store');
         Route::get('/{observation}/edit', [ObservationController::class, 'edit'])->name('edit');
