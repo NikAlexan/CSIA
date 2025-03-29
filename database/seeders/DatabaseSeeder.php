@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             BatchSeeder::class,
             ObservationSeeder::class,
             NotificationScheduleSeeder::class,
+            SensorReadingCsvSeeder::class,
         ));
 
 
