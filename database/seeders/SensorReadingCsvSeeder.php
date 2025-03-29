@@ -10,7 +10,7 @@ class SensorReadingCsvSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = Storage::path('2025-03-20.csv');
+        $path = base_path() . "/database/seeders/files/2025-03-20.csv";
         if (!file_exists($path)) {
             echo "CSV not found at: $path\n";
             return;
