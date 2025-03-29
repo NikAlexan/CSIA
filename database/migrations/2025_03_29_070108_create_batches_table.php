@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('microgreen_id')->constrained('microgreens')->onDelete('cascade');
             $table->dateTime('dateOfSowing');
-            $table->integer('dateOfCollection');
+            $table->dateTime('dateOfCollection');
             $table->timestamps();
         });
     }

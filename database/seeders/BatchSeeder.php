@@ -17,8 +17,8 @@ class BatchSeeder extends Seeder
 
         foreach ($users as $user) {
             foreach ($microgreens->random(2) as $microgreen) {
-                $sowingDate = Carbon::now()->subDays(rand(1, 10));
-                $collectionOffset = rand(3, 7);
+                $sowingDate = Carbon::now()->subDays(rand(10, 20));
+                $collectionOffset = Carbon::now()->subDays(rand(1, 10));
 
                 Batch::create([
                     'user_id' => $user->id,

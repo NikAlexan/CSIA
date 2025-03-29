@@ -10,8 +10,8 @@ class BatchController extends Controller
 {
     public function index()
     {
-        $batches =  Batch::all();
-        return Inertia::render('Batches');
+        $batches =  Batch::with('microgreen')->get();
+        return Inertia::render('Batches', ['batches' => $batches]);
     }
 
     public function create()
