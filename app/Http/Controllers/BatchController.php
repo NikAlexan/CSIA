@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Batch;
+use Illuminate\Http\Request;
+
+class BatchController extends Controller
+{
+    public function index()
+    {
+        return Batch::all();
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'microgreen_id' => 'required|exists:microgreens,id',
+            'dateOfSowing' => 'required|date',
+            'dateOfCollection' => 'required|integer',
+        ]);
+
+        $batch = Batch::create($data);
+        return response()->json($batch, 201);
+    }
+
+    public function show(Batch $batch)
+    {
+        return $batch;
+    }
+
+    public function update(Request $request, Batch $batch)
+    {
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'microgreen_id' => 'required|exists:microgreens,id',
+            'dateOfSowing' => 'required|date',
+            'dateOfCollection' => 'required|integer',
+        ]);
+
+        $batch->update($data);
+        return response()->json($batch);
+    }
+
+    public function destroy(Batch $batch)
+    {
+        $batch->delete();
+        return response()->json(['message' => 'Batch deleted']);
+    }
+}
