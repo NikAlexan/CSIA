@@ -12,20 +12,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
+        $this->call(class: array(
             UserSeeder::class,
             MicrogreenSeeder::class,
             BatchSeeder::class,
             ObservationSeeder::class,
-        ]);
+            NotificationScheduleSeeder::class,
+        ));
 
-        $this->call([
-            MicrogreenSeeder::class,
-        ]);
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
 
     }
 }
