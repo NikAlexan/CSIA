@@ -12,7 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            UserSeeder::class,
+            MicrogreenSeeder::class,
+            BatchSeeder::class,
+            ObservationSeeder::class,
+        ]);
+
         $this->call([
             MicrogreenSeeder::class,
         ]);
@@ -21,8 +27,5 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $this->call([
-            MicrogreenSeeder::class
-        ]);
     }
 }
