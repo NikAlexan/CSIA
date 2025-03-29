@@ -5,7 +5,6 @@ install:
 run:
 	./vendor/bin/sail up -d
 
-
 # запуск composer в докере
 composer-install:
 	docker run \
@@ -17,3 +16,10 @@ composer-install:
 		--interactive \
 		--rm \
 		composer composer install --ignore-platform-reqs
+
+
+npm-dev:
+	./vendor/bin/sail npm run dev
+
+npm-build:
+	./vendor/bin/sail npm run build

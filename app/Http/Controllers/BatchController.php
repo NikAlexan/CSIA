@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Batch;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BatchController extends Controller
 {
     public function index()
     {
-        return Batch::all();
+        $batches =  Batch::all();
+        return Inertia::render('Batches');
+    }
+
+    public function create()
+    {
+
     }
 
     public function store(Request $request)
@@ -25,7 +32,7 @@ class BatchController extends Controller
         return response()->json($batch, 201);
     }
 
-    public function show(Batch $batch)
+    public function edit(Batch $batch)
     {
         return $batch;
     }

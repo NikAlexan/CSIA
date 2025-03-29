@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Microgreen;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MicrogreenController extends Controller
 {
     public function index()
     {
-        return Microgreen::all();
+        $microgreen = Microgreen::all();
+
+        return Inertia::render('Microgreen', ['microgreen' => $microgreen]);
+    }
+
+    public function create() {
+
     }
 
     public function store(Request $request)
