@@ -22,7 +22,7 @@ import {
 } from '@tanstack/vue-table'
 import {h, ref, watch} from 'vue'
 import {ChevronsUpDown} from "lucide-vue-next";
-import {Link} from "@inertiajs/vue3";
+import {Link, router} from "@inertiajs/vue3";
 
 export interface Microgreen {
   id: bigint
@@ -62,10 +62,18 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => h(Link, {
-      class: 'text-blue-500 hover:text-blue-700',
-      href: `/microgreens/${row.original.id}/edit`,
-    }, 'Edit')
+    cell: ({ row }) => h('div', { class: 'flex gap-2' }, [
+      h(Button, {
+        variant: 'ghost',
+        class: 'text-blue-500 hover:text-blue-700',
+        onClick: () => router.get(`/microgreens/${row.original.id}/edit`)
+      }, 'Edit'),
+      h(Button, {
+        variant: 'ghost',
+        class: 'text-red-500 hover:text-red-700',
+        onClick: () => confirm('Delete this microgreen?') && router.delete(`/microgreens/${row.original.id}`)
+      }, 'Delete')
+    ])
   })
 ]
 

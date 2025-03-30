@@ -22,7 +22,7 @@ import {
 } from '@tanstack/vue-table'
 import { h, ref } from 'vue'
 import { ChevronsUpDown, ImageIcon } from "lucide-vue-next"
-import { Link } from "@inertiajs/vue3"
+import {Link, router} from "@inertiajs/vue3"
 import { format } from 'date-fns'
 
 interface Observation {
@@ -72,10 +72,18 @@ const columns = [
     columnHelper.display({
         id: 'actions',
         header: 'Actions',
-        cell: ({ row }) => h(Link, {
-            class: 'text-blue-500 hover:text-blue-700',
-            href: `/observations/${row.original.id}/edit`,
-        }, 'View Details')
+        cell: ({ row }) => h('div', { class: 'flex gap-2' }, [
+            h(Button, {
+                variant: 'ghost',
+                class: 'text-blue-500 hover:text-blue-700',
+                onClick: () => router.get(`/observations/${row.original.id}/edit`)
+            }, 'Edit'),
+            h(Button, {
+                variant: 'ghost',
+                class: 'text-red-500 hover:text-red-700',
+                onClick: () => confirm('Delete this item?') && router.delete(`/observations/${row.original.id}`)
+            }, 'Delete')
+        ])
     })
 ]
 
