@@ -43,21 +43,21 @@ class NotificationScheduleController extends Controller
 
     public function edit(NotificationSchedule $notificationSchedule)
     {
-
+        $types = NotificationTypes::array();
+        return Inertia::render('NotificationSchedule/Edit', ['types' => $types, 'notificationSchedule' => $notificationSchedule]);
     }
 
     public function update(Request $request, NotificationSchedule $notificationSchedule)
     {
         $data = $request->validate([
-            'user_id'   => 'required|exists:users,id',
-            'type'      => 'required|string',
+            'type' => 'required|string',
             'notify_at' => 'nullable|date_format:H:i:s',
-            'message'   => 'nullable|string',
-            'enabled'   => 'boolean',
+            'message' => 'nullable|string',
+            'enabled' => 'boolean',
         ]);
 
         $notificationSchedule->update($data);
-        return response()->json($notificationSchedule);
+        return redirect()->route('notifications.schedule.index');
     }
 
     public function destroy(NotificationSchedule $notificationSchedule)

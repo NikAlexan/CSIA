@@ -128,6 +128,8 @@ const onSubmit = handleSubmit(async (values) => {
                         id="enabled"
                         name="enabled"
                         type="checkbox"
+                        :value="true"
+                        :unchecked-value="false"
                         class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     <label for="enabled" class="ml-2 block text-sm text-gray-700">
