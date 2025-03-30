@@ -8,6 +8,7 @@ enum NotificationTypes: string
     case Watering = 'watering';
     case DailyCheck = 'daily_check';
     case Tip = 'tip';
+
     // Добавить название для case в формате self:case
     public function getName(): string
     {

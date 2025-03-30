@@ -22,68 +22,54 @@ import {
     useVueTable,
 } from '@tanstack/vue-table'
 import { h, ref } from 'vue'
-import { ChevronsUpDown } from "lucide-vue-next"
-import {Link, router} from "@inertiajs/vue3"
-import { format } from 'date-fns'
+import { ChevronsUpDown, Bell, ToggleRight, ToggleLeft } from "lucide-vue-next"
+import { router } from '@inertiajs/vue3'
 
-interface Microgreen {
-    id: bigint
-    name: string
-    germination_time: string
-    temperature: string
-    value: boolean
-}
-
-interface Batch {
+interface NotificationSchedule {
     id: number
-    user_id: number
-    microgreen_id: number
-    microgreen: Microgreen
-    dateOfSowing: Date | string
-    dateOfCollection: Date | string | null
-    light: string
+    type: string
+    type_name: string
+    notify_at: string
+    enabled: boolean
+    message: string
 }
 
-const { batches } = defineProps<{ batches: Batch[] }>()
+const { notificationsSchedule } = defineProps<{ notificationsSchedule: NotificationSchedule[] }>()
 
-const columnHelper = createColumnHelper<Batch>()
+const columnHelper = createColumnHelper<NotificationSchedule>()
 
 const columns = [
-    columnHelper.accessor(row => row.microgreen.name, {
-        id: 'microgreen_name',
+    columnHelper.accessor('type_name', {
         header: ({ column }) => {
             return h(Button, {
                 variant: 'ghost',
                 onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Microgreen', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
+            }, () => ['Notification Type', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
         },
-        cell: ({ row }) => h('div', row.getValue('microgreen_name') || 'N/A'),
+        cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, row.getValue('type_name'))
     }),
-    columnHelper.accessor('dateOfSowing', {
-        header: ({ column }) => {
-            return h(Button, {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Sowing Date', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
-        },
-        cell: ({ row }) => {
-            const date = row.getValue<Date>('dateOfSowing')
-            return h('div', date ? format(new Date(date), 'MMM dd, yyyy') : 'N/A')
-        },
-        sortingFn: 'datetime'
+    columnHelper.accessor('notify_at', {
+        header: 'Scheduled Time',
+        cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
+            h(Bell, { class: 'w-4 h-4' }),
+            row.getValue('notify_at')
+        ])
     }),
-    columnHelper.accessor('dateOfCollection', {
-        header: ({ column }) => {
-            return h(Button, {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Collection Date', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
-        },
-        cell: ({ row }) => {
-            const date = row.getValue<Date | null>('dateOfCollection')
-            return h('div', date ? format(new Date(date), 'MMM dd, yyyy') : 'Not collected')
-        },
-        sortingFn: 'datetime'
+    columnHelper.accessor('enabled', {
+        header: 'Status',
+        cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
+            row.getValue('enabled')
+                ? h(ToggleRight, { class: 'w-5 h-5 text-green-500' })
+                : h(ToggleLeft, { class: 'w-5 h-5 text-gray-400' }),
+            row.getValue('enabled') ? 'Active' : 'Inactive'
+        ])
+    }),
+    columnHelper.accessor('message', {
+        header: 'Message',
+        cell: ({ row }) => h('div', {
+            class: 'truncate max-w-[200px]',
+            title: row.getValue('message')
+        }, row.getValue('message'))
     }),
     columnHelper.display({
         id: 'actions',
@@ -92,12 +78,12 @@ const columns = [
             h(Button, {
                 variant: 'ghost',
                 class: 'text-blue-500 hover:text-blue-700',
-                onClick: () => router.get(`/batches/${row.original.id}/edit`)
+                onClick: () => router.get(`/notifications/schedule/${row.original.id}/edit`)
             }, 'Edit'),
             h(Button, {
                 variant: 'ghost',
                 class: 'text-red-500 hover:text-red-700',
-                onClick: () => confirm('Delete this item?') && router.delete(`/batches/${row.original.id}`)
+                onClick: () => confirm('Delete this schedule?') && router.delete(`/notifications/schedule/${row.original.id}`)
             }, 'Delete')
         ])
     })
@@ -107,7 +93,7 @@ const sorting = ref<SortingState>([])
 const columnFilters = ref<ColumnFiltersState>([])
 
 const table = useVueTable({
-    data: batches,
+    data: notificationsSchedule,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -125,14 +111,14 @@ const table = useVueTable({
 <template>
     <div class="w-full p-4">
         <div class="flex gap-2 items-center py-4">
-            <a href="/batches/create" class="rounded-md text-sm font-medium ring-offset-background bg-green-600 hover:bg-green-700 text-white px-4 py-2">
-                Create Batch
+            <a href="/notifications/schedule/create" class="rounded-md text-sm font-medium ring-offset-background bg-green-600 hover:bg-green-700 text-white px-4 py-2">
+                New Schedule
             </a>
             <Input
                 class="max-w-sm"
-                placeholder="Filter by microgreen name..."
-                :model-value="table.getColumn('microgreen_name')?.getFilterValue() as string"
-                @update:model-value="table.getColumn('microgreen_name')?.setFilterValue($event)"
+                placeholder="Filter by type..."
+                :model-value="table.getColumn('type_name')?.getFilterValue() as string"
+                @update:model-value="table.getColumn('type_name')?.setFilterValue($event)"
             />
         </div>
         <div class="rounded-md border">
@@ -156,7 +142,7 @@ const table = useVueTable({
                     </template>
                     <TableRow v-else>
                         <TableCell :colspan="columns.length" class="h-24 text-center">
-                            No batches found.
+                            No schedules found.
                         </TableCell>
                     </TableRow>
                 </TableBody>

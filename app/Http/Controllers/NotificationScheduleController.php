@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 use App\Models\NotificationSchedule;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class NotificationScheduleController extends Controller
 {
     public function index()
     {
-        return NotificationSchedule::all();
+        $notificationsSchedule = NotificationSchedule::where('user_id', Auth::user()->id)->get();
+
+        return Inertia::render('NotificationSchedule', [
+            "notificationsSchedule" => $notificationsSchedule,
+        ]);
     }
 
     public function create()
