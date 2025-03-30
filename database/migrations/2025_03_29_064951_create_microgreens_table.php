@@ -10,13 +10,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('microgreens', function (Blueprint $table) {
-            $table->id();
-            $table->string('name'); // Название сорта (например, базилик)
-            $table->string('germination_time')->nullable(); // Срок проращивания (например, "5-7 дней")
-            $table->string('temperature')->nullable(); // Рекомендованная температура (например, "20-24°C")
-            $table->string('light')->nullable(); // Освещение (например, "яркий рассеянный свет")
-            $table->timestamps(); // created_at и updated_at
-        });
+    $table->id();
+    $table->string('name');
+    $table->integer('germination_min_days')->nullable();
+    $table->integer('germination_max_days')->nullable();
+    $table->float('temperature_min')->nullable();
+    $table->float('temperature_max')->nullable();
+    $table->string('light')->nullable();
+    $table->timestamps();
+});
+
     }
 
     public function down(): void
