@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Batch;
 use App\Models\Observation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +13,12 @@ class ObservationController extends Controller
     public function index()
     {
         $observations = Observation::all();
-        return Inertia::render('Observations', ['observations' => $observations]);
+        return Inertia::render('Observation/List', ['observations' => $observations]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Observation/Create', ['batches' => Batch::all()]);
     }
 
     public function store(Request $request)
@@ -21,18 +27,20 @@ class ObservationController extends Controller
             'batch_id' => 'required|exists:batches,id',
             'date' => 'required|date',
             'visualChanges' => 'required|string',
-            'image' => 'required|string', // путь к изображению
+            'image' => 'required|image',
             'height' => 'required|string',
             'notes' => 'nullable|string',
         ]);
 
-        $observation = Observation::create($data);
-        return response()->json($observation, 201);
+        $data['image'] = Storage::putFile('observations', $request->file('image'));
+
+        Observation::create($data);
+        return redirect()->route('observations.index');
     }
 
-    public function show(Observation $observation)
+    public function edit(Observation $observation)
     {
-        return $observation;
+        return Inertia::render('Observation/Edit', ['batches' => Batch::all(), 'observation' => $observation]);
     }
 
     public function update(Request $request, Observation $observation)
@@ -53,7 +61,7 @@ class ObservationController extends Controller
     public function destroy(Observation $observation)
     {
         $observation->delete();
-        return response()->json(['message' => 'Observation deleted']);
+        return redirect()->route('observations.index');
     }
 
     public function getImage(Observation $observation): StreamedResponse

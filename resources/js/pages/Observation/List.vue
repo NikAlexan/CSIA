@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import ObservationList from '../components/Observation/List.vue';
+import ObservationList from '../../components/Observation/List.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

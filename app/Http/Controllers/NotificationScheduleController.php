@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\NotificationSchedule;
-use App\Models\User;
 use App\NotificationTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
