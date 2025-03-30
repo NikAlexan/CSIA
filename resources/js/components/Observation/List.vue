@@ -48,7 +48,6 @@ const columns = [
             const date = row.getValue<Date>('date')
             return h('div', date ? format(new Date(date), 'MMM dd, yyyy') : 'N/A')
         },
-        sortingFn: 'datetime'
     }),
     columnHelper.accessor('height', {
         header: 'Height',
@@ -81,7 +80,8 @@ const columns = [
             h(Button, {
                 variant: 'ghost',
                 class: 'text-red-500 hover:text-red-700',
-                onClick: () => confirm('Delete this item?') && router.delete(`/observations/${row.original.id}`)
+                onClick: () => confirm('Delete this item?') && router.delete(`/observations/${row.original.id}`,
+                    {onSuccess: ()=> router.visit('/observations')})
             }, 'Delete')
         ])
     })

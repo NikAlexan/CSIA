@@ -15,8 +15,17 @@ class Batch extends Model
         'dateOfCollection',
     ];
 
+    protected $appends = [
+        'name'
+    ];
+
     public function microgreen(): BelongsTo
     {
         return $this->belongsTo(Microgreen::class);
+    }
+
+    public function getNameAttribute(): string
+    {
+        return "ID:" . $this->id . ' - ' . $this->microgreen->name;
     }
 }
