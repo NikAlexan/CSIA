@@ -83,7 +83,9 @@ const columns = [
             h(Button, {
                 variant: 'ghost',
                 class: 'text-red-500 hover:text-red-700',
-                onClick: () => confirm('Delete this schedule?') && router.delete(`/notifications/schedule/${row.original.id}`)
+                onClick: () => confirm('Delete this schedule?') && router.delete(`/notifications/schedule/${row.original.id}`,
+                    {onSuccess: () => router.visit('/notifications/schedule') }
+                ),
             }, 'Delete')
         ])
     })

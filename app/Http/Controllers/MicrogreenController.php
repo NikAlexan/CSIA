@@ -12,45 +12,52 @@ class MicrogreenController extends Controller
     {
         $microgreen = Microgreen::all();
 
-        return Inertia::render('Microgreen', ['microgreen' => $microgreen]);
+        return Inertia::render('Microgreen/List', ['microgreen' => $microgreen]);
     }
 
     public function create() {
-        return view('microgreen.create');
+        return Inertia::render('Microgreen/Create');
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'germination_time' => 'nullable|string',
-            'temperature' => 'nullable|string',
+            'germination_min_days' => 'integer|min:0',
+            'germination_max_days' => 'integer|min:0|gte:germination_min_days',
+            'temperature_min' => 'numeric',
+            'temperature_max' => 'numeric|gte:temperature_min',
             'light' => 'nullable|string',
         ]);
-        return Microgreen::create($data);
+
+        Microgreen::create($data);
+
+        return redirect()->route('microgreen.index');
     }
 
-    public function show(Microgreen $microgreen)
+    public function edit(Microgreen $microgreen)
     {
-        return $microgreen;
+        return Inertia::render('Microgreen/Edit', ['microgreen' => $microgreen]);
     }
 
     public function update(Request $request, Microgreen $microgreen)
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'germination_time' => 'nullable|string',
-            'temperature' => 'nullable|string',
+            'germination_min_days' => 'integer|min:0',
+            'germination_max_days' => 'integer|min:0|gte:germination_min_days',
+            'temperature_min' => 'numeric',
+            'temperature_max' => 'numeric|gte:temperature_min',
             'light' => 'nullable|string',
         ]);
 
         $microgreen->update($data);
-        return $microgreen;
+        return redirect()->route('microgreen.index');
     }
 
     public function destroy(Microgreen $microgreen)
     {
         $microgreen->delete();
-        return response()->json(['message' => 'Deleted']);
+        return redirect()->route('microgreen.index');
     }
 }

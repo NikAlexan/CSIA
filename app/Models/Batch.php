@@ -15,10 +15,6 @@ class Batch extends Model
         'dateOfCollection',
     ];
 
-    protected $casts = [
-        'dateOfSowing' => 'datetime',
-    ];
-
     public function microgreen(): BelongsTo
     {
         return $this->belongsTo(Microgreen::class);

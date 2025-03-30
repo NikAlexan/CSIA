@@ -2,23 +2,27 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import NotificationScheduleList from '../components/NotificationSchedule/List.vue';
+import MicrogreenList from '../../components/Microgreen/List.vue';
+
+const props = defineProps({
+    someData: String,
+})
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Notifications schedule',
-        href: '/notifications/schedule',
+        title: 'Microgreen',
+        href: '/microgreens',
     },
 ];
 </script>
 
 <template>
-    <Head title="Batches" />
+    <Head title="Microgreen" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full rounded-xl p-4">
             <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-                <NotificationScheduleList :notificationsSchedule="$page.props.notificationsSchedule" />
+                <MicrogreenList :microgreen="$page.props.microgreen" />
             </div>
         </div>
     </AppLayout>
