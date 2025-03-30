@@ -16,7 +16,7 @@ class MicrogreenController extends Controller
     }
 
     public function create() {
-
+        return view('microgreen.create');
     }
 
     public function store(Request $request)
@@ -27,7 +27,6 @@ class MicrogreenController extends Controller
             'temperature' => 'nullable|string',
             'light' => 'nullable|string',
         ]);
-
         return Microgreen::create($data);
     }
 
