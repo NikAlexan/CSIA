@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\NotificationSchedule;
 use App\Models\User;
+use App\Models\NotificationSchedule;
+use App\NotificationTypes;
 
 class NotificationScheduleSeeder extends Seeder
 {
@@ -15,23 +16,23 @@ class NotificationScheduleSeeder extends Seeder
         foreach ($users as $user) {
             NotificationSchedule::create([
                 'user_id' => $user->id,
-                'type' => 'watering',
+                'type' => NotificationTypes::Watering->value,
                 'notify_at' => '08:00:00',
-                'message' => 'Время полить микрозелень!',
+                'message' => NotificationTypes::Watering->getName() . ' — Время полить микрозелень!',
             ]);
 
             NotificationSchedule::create([
                 'user_id' => $user->id,
-                'type' => 'daily_check',
+                'type' => NotificationTypes::DailyCheck->value,
                 'notify_at' => '10:00:00',
-                'message' => 'Оцените состояние микрозелени сегодня.',
+                'message' => NotificationTypes::DailyCheck->getName() . ' — Оцените состояние микрозелени сегодня.',
             ]);
 
             NotificationSchedule::create([
                 'user_id' => $user->id,
-                'type' => 'tip',
+                'type' => NotificationTypes::Tip->value,
                 'notify_at' => null,
-                'message' => 'Следите за влажностью — не более 60%, чтобы избежать плесени.',
+                'message' => NotificationTypes::Tip->getName() . ' — Следите за влажностью — не более 60%.',
                 'enabled' => false,
             ]);
         }

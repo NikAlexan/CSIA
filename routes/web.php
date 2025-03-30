@@ -3,8 +3,8 @@
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MicrogreenController;
+use App\Http\Controllers\NotificationScheduleController;
 use App\Http\Controllers\ObservationController;
-use App\Models\NotificationSchedule;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -45,12 +45,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     Route::group(['prefix' => 'notifications', 'as' => 'notifications.'], function () {
         Route::group(['prefix' => 'schedule', 'as' => 'schedule.'], function () {
-            Route::get('/', [NotificationSchedule::class, 'index'])->name('index');
-            Route::get('/create', [NotificationSchedule::class, 'create'])->name('create');
-            Route::post('/', [NotificationSchedule::class, 'store'])->name('store');
-            Route::get('/{schedule}/edit', [NotificationSchedule::class, 'edit'])->name('edit');
-            Route::patch('/{schedule}', [NotificationSchedule::class, 'update'])->name('update');
-            Route::delete('/{schedule}', [NotificationSchedule::class, 'destroy'])->name('destroy');
+            Route::get('/', [NotificationScheduleController::class, 'index'])->name('index');
+            Route::get('/create', [NotificationScheduleController::class, 'create'])->name('create');
+            Route::post('/', [NotificationScheduleController::class, 'store'])->name('store');
+            Route::get('/{schedule}/edit', [NotificationScheduleController::class, 'edit'])->name('edit');
+            Route::patch('/{schedule}', [NotificationScheduleController::class, 'update'])->name('update');
+            Route::delete('/{schedule}', [NotificationScheduleController::class, 'destroy'])->name('destroy');
         });
     });
 });
