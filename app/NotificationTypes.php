@@ -19,4 +19,14 @@ enum NotificationTypes: string
             default => 'Undefined name'
         };
     }
+
+    public static function array(): array
+    {
+        return array_map(function($case) {
+            return [
+                'value' => $case->value,
+                'name' => $case->getName()
+            ];
+        }, self::cases());
+    }
 }

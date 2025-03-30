@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Microgreen',
-        href: '/microgreen',
+        href: '/microgreens',
         icon: Sprout,
     },
     {

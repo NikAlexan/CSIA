@@ -57,7 +57,7 @@ const columns = [
                 onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             }, () => ['Microgreen', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
         },
-        cell: ({ row }) => h('div', row.getValue('microgreen_name') || 'N/A'),
+        cell: ({ row }) => h('div',  `ID:${row.original.id} - ${row.getValue('microgreen_name')}` || 'N/A'),
     }),
     columnHelper.accessor('dateOfSowing', {
         header: ({ column }) => {

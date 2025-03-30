@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Batch;
+use App\Models\Microgreen;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,12 +13,14 @@ class BatchController extends Controller
     public function index()
     {
         $batches =  Batch::with('microgreen')->get();
-        return Inertia::render('Batches', ['batches' => $batches]);
+        return Inertia::render('Batch/List', ['batches' => $batches]);
     }
 
     public function create()
     {
-
+        $users = User::all();
+        $microgreen = Microgreen::all();
+        return Inertia::render('Batch/Create', ['users' => $users, 'microgreen' => $microgreen]);
     }
 
     public function store(Request $request)
@@ -25,16 +29,23 @@ class BatchController extends Controller
             'user_id' => 'required|exists:users,id',
             'microgreen_id' => 'required|exists:microgreens,id',
             'dateOfSowing' => 'required|date',
-            'dateOfCollection' => 'required|integer',
+            'dateOfCollection' => 'required|date',
         ]);
 
-        $batch = Batch::create($data);
-        return response()->json($batch, 201);
+        Batch::create($data);
+        return redirect()->route('batches.index');
     }
 
     public function edit(Batch $batch)
     {
-        return $batch;
+        $users = User::all();
+        $microgreen = Microgreen::all();
+
+        return Inertia::render('Batch/Edit', [
+            'users' => $users,
+            'microgreen' => $microgreen,
+            'batch' => $batch
+        ]);
     }
 
     public function update(Request $request, Batch $batch)
@@ -43,16 +54,16 @@ class BatchController extends Controller
             'user_id' => 'required|exists:users,id',
             'microgreen_id' => 'required|exists:microgreens,id',
             'dateOfSowing' => 'required|date',
-            'dateOfCollection' => 'required|integer',
+            'dateOfCollection' => 'required|date',
         ]);
 
         $batch->update($data);
-        return response()->json($batch);
+        return redirect()->route('batches.index');
     }
 
     public function destroy(Batch $batch)
     {
         $batch->delete();
-        return response()->json(['message' => 'Batch deleted']);
+        return redirect()->route('batches.index');
     }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn, valueUpdater } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input' // Add this import
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -27,8 +27,10 @@ import {Link, router} from "@inertiajs/vue3";
 export interface Microgreen {
   id: bigint
   name: string
-  germination_time: string
-  temperature: string
+  germination_min_days: number
+  germination_max_days: number
+  temperature_min: number
+  temperature_max: number
   light: string
   value: boolean
 }
@@ -47,13 +49,19 @@ const columns = [
     },
     cell: ({ row }) => h('div', row.getValue('name')),
   }),
-  columnHelper.accessor('germination_time', {
-    header: 'Germination Time',
-    cell: ({ row }) => h('div', row.getValue('germination_time')),
+  columnHelper.accessor(row => `${row.original.germination_min_days}-${row.original.germination_max_days}`, {
+    id: 'germination_days',
+    header: 'Germination Days',
+    cell: ({ row }) => h('div',
+        `${row.original.germination_min_days} - ${row.original.germination_max_days} days`
+    ),
   }),
-  columnHelper.accessor('temperature', {
-    header: 'Temperature',
-    cell: ({ row }) => h('div', row.getValue('temperature')),
+  columnHelper.accessor(row => `${row.original.temperature_min} - ${row.original.temperature_max}`, {
+    id: 'temperature_range',
+    header: 'Temperature Range',
+    cell: ({ row }) => h('div',
+        `${row.original.temperature_min} - ${row.original.temperature_max}°C`
+    ),
   }),
   columnHelper.accessor('light', {
     header: 'Light',
@@ -71,7 +79,11 @@ const columns = [
       h(Button, {
         variant: 'ghost',
         class: 'text-red-500 hover:text-red-700',
-        onClick: () => confirm('Delete this microgreen?') && router.delete(`/microgreens/${row.original.id}`)
+        onClick: () => confirm('Delete this microgreen?') && router.delete(`/microgreens/${row.original.id}`, {
+          onSuccess: () => {
+            router.visit('/microgreens'); // Redirect to index page
+          }
+        })
       }, 'Delete')
     ])
   })
@@ -107,10 +119,9 @@ const table = useVueTable({
 <template>
   <div class="w-full p-4">
     <div class="flex gap-2 items-center py-4">
-      <a href="/microgreen/create" class="rounded-md text-sm font-medium ring-offset-background bg-green-600 hover:bg-green-700 text-white px-4 py-2">
+      <a href="/microgreens/create" class="rounded-md text-sm font-medium ring-offset-background bg-green-600 hover:bg-green-700 text-white px-4 py-2">
         Create Microgreen
       </a>
-      <!-- Add the filter input -->
       <Input
           class="max-w-sm"
           placeholder="Filter microgreens by name..."
@@ -139,7 +150,7 @@ const table = useVueTable({
           </template>
           <TableRow v-else>
             <TableCell :colspan="columns.length" class="h-24 text-center">
-              No results found.
+              No microgreens found.
             </TableCell>
           </TableRow>
         </TableBody>

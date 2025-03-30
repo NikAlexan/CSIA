@@ -24,9 +24,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::delete('/{batch}', [BatchController::class, 'destroy'])->name('destroy');
     });
 
-    Route::group(['prefix' => 'microgreen', 'as' => 'microgreen.'], function () {
+    Route::group(['prefix' => 'microgreens', 'as' => 'microgreen.'], function () {
         Route::get('/', [MicrogreenController::class, 'index'])->name('index');
-        Route::get('/create', [MicrogreenController::class, 'create'])->name('index');
+        Route::get('/create', [MicrogreenController::class, 'create'])->name('create');
         Route::post('/', [MicrogreenController::class, 'store'])->name('store');
         Route::get('/{microgreen}/edit', [MicrogreenController::class, 'edit'])->name('edit');
         Route::patch('/{microgreen}', [MicrogreenController::class, 'update'])->name('update');
@@ -48,9 +48,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
             Route::get('/', [NotificationScheduleController::class, 'index'])->name('index');
             Route::get('/create', [NotificationScheduleController::class, 'create'])->name('create');
             Route::post('/', [NotificationScheduleController::class, 'store'])->name('store');
-            Route::get('/{schedule}/edit', [NotificationScheduleController::class, 'edit'])->name('edit');
-            Route::patch('/{schedule}', [NotificationScheduleController::class, 'update'])->name('update');
-            Route::delete('/{schedule}', [NotificationScheduleController::class, 'destroy'])->name('destroy');
+            Route::get('/{notificationSchedule}/edit', [NotificationScheduleController::class, 'edit'])->name('edit');
+            Route::patch('/{notificationSchedule}', [NotificationScheduleController::class, 'update'])->name('update');
+            Route::delete('/{notificationSchedule}', [NotificationScheduleController::class, 'destroy'])->name('destroy');
         });
     });
 });

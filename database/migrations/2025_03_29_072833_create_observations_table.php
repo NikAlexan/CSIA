@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->text('visualChanges');
             $table->string('image');
             $table->string('height');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
